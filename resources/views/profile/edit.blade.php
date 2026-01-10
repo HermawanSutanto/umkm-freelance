@@ -211,6 +211,21 @@
                     </div>
                 </div>
             @endif
+            {{-- FORM KHUSUS ADMIN --}}
+            @if($user->role === 'admin')
+                <div class="space-y-4 pt-4">
+                    <h3 class="text-lg font-bold text-gray-900 border-b pb-2">Profil Admin</h3>
+                    {{-- 1. phone_number & Status --}}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="block text-sm font-semibold text-gray-700">Nomor Telepon</label>
+                            <input type="text" name="phone_number" value="{{ old('phone_number', $user->adminProfile?->phone_number) }}" placeholder="08..." class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-gold/50 focus:border-brand-gold outline-none">
+                            @error('phone_number') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                        </div>
+                    </div>
+                </div>
+            @endif
+
 
             <div class="pt-4">
                 <button type="submit" class="w-full bg-gray-900 text-white font-bold py-3.5 px-4 rounded-xl hover:bg-gray-800 transition shadow-lg transform hover:-translate-y-0.5">

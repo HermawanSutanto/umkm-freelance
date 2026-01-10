@@ -17,7 +17,7 @@ class Product extends Model
         'user_id','category_id', 'name', 'slug', 'description', 
         'price', 'stock', 'cover_image', 'is_active','highlight_level','highlight_expires_at'
     ];
-    
+    protected $appends = ['cover_url', 'price_format'];
 
     // Relasi: 1 Produk punya BANYAK Gambar Galeri
     public function images()

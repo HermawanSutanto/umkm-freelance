@@ -19,7 +19,7 @@ class ProfileController extends Controller
      */
     public function edit()
     {
-        $user = Auth::user()->load(['mitraProfile', 'freelancerProfile']);
+        $user = Auth::user()->load(['mitraProfile', 'freelancerProfile','adminProfile']);
         return view('profile.edit', compact('user'));
     }
 
@@ -64,8 +64,9 @@ class ProfileController extends Controller
             ]);
             // dd($rules);
 
+        }elseif($user->role==='admin'){
+            $rules = array_merge($rules,[ 'phone_number'     => 'nullable|string',]);
         }
-
         // Jalankan Validasi
         $validated = $request->validate($rules, [
             'close_time.after'   => 'Jam tutup harus lebih akhir dari jam buka.',
@@ -74,7 +75,6 @@ class ProfileController extends Controller
             
         ]);
         // dd($validated);
-
         DB::beginTransaction();
 
         try {
@@ -117,24 +117,23 @@ class ProfileController extends Controller
                     $mitraData
                 );
             } 
-            
-            // 5. Update Profile Freelancer
             elseif ($user->role === 'freelancer') {
-                // dd($user->role,$request);
-
                 $user->freelancerProfile()->updateOrCreate(
                     ['user_id' => $user->id],
                     [
                         'headline'       => $request->headline,
                         'bio'            => $request->bio,
                         'skills'         => $request->skills,
-                        'is_available'   => $request->is_available,
-                        
-                        // Tautan
-                        'portfolio_link' => $request->portfolio_link, // Pastikan nama kolom di DB sesuai
+                        'is_available'   => $request->is_available,                  
+                        'portfolio_link' => $request->portfolio_link, 
                         'linkedin_url'   => $request->linkedin_url,
-                        
-                        // Note: Kolom 'hourly_rate' dihapus dari request karena tidak dipakai di view
+                                            ]
+                );
+            }elseif ($user->role === 'admin') {
+                $user->adminProfile()->updateOrCreate(
+                    ['user_id' => $user->id],
+                    [
+                        'phone_number'       => $request->phone_number,                        
                     ]
                 );
             }
@@ -152,7 +151,7 @@ class ProfileController extends Controller
 
     public function show()
     {
-        $user = Auth::user()->load(['mitraProfile', 'freelancerProfile']);
+        $user = Auth::user()->load(['mitraProfile', 'freelancerProfile','adminProfile']);
         return view('profile.show', compact('user'));
     }
 

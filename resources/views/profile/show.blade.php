@@ -134,6 +134,13 @@
                             @endif
                         </div>
                     </div>
+                @elseif($user->role === 'admin' && $user->adminProfile)
+                    
+                    {{-- 1. number (Full Width) --}}
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">Nomor Telepon</h3>
+                        <p class="text-gray-900">{{ $user->adminProfile->phone_number ?? '-' }}</p>
+                    </div>
 
                 @else
                     {{-- Jika Profil Belum Lengkap --}}

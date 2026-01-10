@@ -32,11 +32,9 @@
 
                 @auth
                     @if(Auth::user()->role === 'mitra')
-                        <a href="{{ route('dashboard') }}" class="{{ $navClass }} {{ request()->is('dashboard*') ? $activeClass : '' }}">
-                            Kelola Toko
+                        <a href="{{ route('mitra.products.index') }}" class="{{ $navClass }} {{ request()->is('products*') ? $activeClass : '' }}">
+                            Kelola Produk
                         </a>
-                        <a href="#" class="{{ $navClass }}">Pesanan Masuk</a>
-                        <a href="#" class="{{ $navClass }}">Cari Jasa</a>
                     @endif
 
                     @if(Auth::user()->role === 'freelancer')
@@ -49,9 +47,7 @@
                     @endif
                 @endauth
 
-                <a href="{{ url('/tentang') }}" class="{{ $navClass }} {{ request()->is('tentang*') ? $activeClass : '' }}">
-                    Tentang Kami
-                </a>
+                
             </nav>
             
             {{-- KANAN: User Menu & Mobile Toggle --}}

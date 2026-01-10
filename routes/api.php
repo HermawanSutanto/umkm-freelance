@@ -55,31 +55,3 @@ Route::prefix('shops')->group(function () {
     Route::get('/', [ShopApiController::class, 'index']); // List Toko
     Route::get('/{id}', [ShopApiController::class, 'show']); // Detail Toko
 });
-/*
-|--------------------------------------------------------------------------
-| Protected Routes (Harus ada Token Bearer)
-|--------------------------------------------------------------------------
-*/
-// Route::middleware('auth:sanctum')->group(function () {
-    
-//     // 1. Logout
-//     Route::post('/logout', [AuthApiController::class, 'logout']);
-
-//     // 2. Get Current User Profile (SMART ROUTE)
-//     // Route ini otomatis mengecek role dan mengambil data profil dari tabel yang benar
-//     Route::get('/user', function (Request $request) {
-//         $user = $request->user();
-        
-//         // Logika Dinamis: Cek role, lalu ambil data dari tabel profil yang sesuai
-//         if ($user->role === 'mitra') {
-//             $user->load('mitraProfile'); // Ambil data dari tabel mitra_profiles
-//         } elseif ($user->role === 'freelancer') {
-//             $user->load('freelancerProfile'); // Ambil data dari tabel freelancer_profiles
-//         }
-        
-//         return $user;
-//     });
-
-
-
-// });

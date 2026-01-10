@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class TransactionApiController extends Controller
@@ -21,8 +22,17 @@ class TransactionApiController extends Controller
 
         // Append accessor URL bukti bayar & format rupiah
         $transactions->each(function ($trx) {
-            $trx->append(['grand_total_format', 'payment_proof_url', 'status_color']);
+            // 1. Append atribut milik Transaksi
+            $trx->append(['grand_total_format', 'payment_proof_url']);
+            
+            // 2. Loop setiap items di dalam transaksi untuk append atribut Produk
+            $trx->items->each(function ($item) {
+                if ($item->product) {
+                    $item->product->append(['cover_url', 'price_format']);
+                }
+            });
         });
+        Log::info('data transaksi', ['data' => $transactions]);
 
         return response()->json([
             'data' => $transactions
@@ -38,7 +48,12 @@ class TransactionApiController extends Controller
             ->firstOrFail();
 
         $transaction->append(['grand_total_format', 'payment_proof_url']);
-
+        // Loop items untuk append atribut produk
+        $transaction->items->each(function ($item) {
+            if ($item->product) {
+                $item->product->append(['cover_url', 'price_format']);
+            }
+        });
         return response()->json([
             'data' => $transaction
         ]);
