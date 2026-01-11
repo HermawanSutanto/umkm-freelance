@@ -4,8 +4,9 @@ use App\Http\Controllers\AdminPromotionController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\PortfolioController;
+use App\Http\Controllers\PaymentMethodController;
 
+use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\IsAdmin;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 
 
 
+Route::redirect('/', '/dashboard');
 // --- GUEST ROUTES (Hanya bisa diakses jika belum login) ---
 Route::middleware('guest')->group(function () {
     // Register
@@ -63,8 +65,29 @@ Route::middleware('auth')->group(function () {
             ->name('promotions.approve');
         
         // 3. Aksi Reject Request (POST)
-        Route::post('/promotions/{id}/reject', [AdminPromotionController::class, 'reject'])
-            ->name('promotions.reject');
+        // Halaman List
+        Route::get('/payment-methods', [PaymentMethodController::class, 'index'])
+            ->name('payment.index');
+
+        // Halaman Form Tambah
+        Route::get('/payment-methods/create', [PaymentMethodController::class, 'create'])
+            ->name('payment.create');
+
+        // Proses Simpan Data Baru (POST)
+        Route::post('/payment-methods', [PaymentMethodController::class, 'store'])
+            ->name('payment.store');
+
+        // Halaman Form Edit (Butuh ID)
+        Route::get('/payment-methods/{id}/edit', [PaymentMethodController::class, 'edit'])
+            ->name('payment.edit');
+
+        // Proses Update Data (PUT, Butuh ID)
+        Route::put('/payment-methods/{id}', [PaymentMethodController::class, 'update'])
+            ->name('payment.update');
+
+        // Proses Hapus Data (DELETE, Butuh ID)
+        Route::delete('/payment-methods/{id}', [PaymentMethodController::class, 'destroy'])
+            ->name('payment.destroy');
     });
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{invoice}', [OrderController::class, 'show'])->name('orders.show');

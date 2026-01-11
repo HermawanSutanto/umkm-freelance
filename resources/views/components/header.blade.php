@@ -31,6 +31,11 @@
                 @endguest
 
                 @auth
+                    @if(Auth::user()->role === 'admin')
+                        <a href="{{ route('admin.payment.index') }}" class="{{ $navClass }} {{ request()->is('methods*') ? $activeClass : '' }}">
+                            Metode Pembayaran
+                        </a>
+                    @endif
                     @if(Auth::user()->role === 'mitra')
                         <a href="{{ route('mitra.products.index') }}" class="{{ $navClass }} {{ request()->is('products*') ? $activeClass : '' }}">
                             Kelola Produk
@@ -137,6 +142,9 @@
                 @endif
                 @if(Auth::user()->role === 'freelancer')
                     <a href="{{ url('/projects') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-brand-gold hover:bg-gray-50">Cari Proyek</a>
+                @endif
+                @if(Auth::user()->role === 'admin')
+                    <a href="{{ url('/payment-methods') }}" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-brand-gold hover:bg-gray-50">Metode Pembayaran</a>
                 @endif
             @endauth
 

@@ -5,14 +5,16 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\CartItem;
+use App\Models\PaymentMethod;
 use App\Models\Product;
+use App\Models\Transaction;
+use App\Models\TransactionItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Symfony\Component\HttpFoundation\Response; // Import Response status code
-use App\Models\Transaction;
-use App\Models\TransactionItem;
 use Illuminate\Support\Str; // Untuk generate invoice code acak
+use Symfony\Component\HttpFoundation\Response; // Import Response status code
+
 class CartApiController extends Controller
 {
     /**
@@ -36,12 +38,21 @@ class CartApiController extends Controller
             $item->product->append('cover_url');
         }
         });
+        $methods = PaymentMethod::where('is_active', true)
+            ->orderBy('id', 'asc') // atau orderBy('name')
+            ->get();
+
+        // return response()->json([
+        //     'success' => true,
+        //     'data'    => $methods
+        // ]);
         // Mengembalikan keranjang dengan total harga yang dihitung via accessor
         return response()->json([
             'message' => 'Detail keranjang berhasil dimuat.',
             'cart' => $cart,
             'total_price_formatted' => $cart->total_price_format, // Menggunakan Accessor
             'total_price_numeric' => $cart->total_price,
+            'payment_method'=>$cart->method
             
         ], Response::HTTP_OK);
     }

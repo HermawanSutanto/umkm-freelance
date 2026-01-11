@@ -4,7 +4,7 @@ use App\Http\Controllers\Api\AuthApiController;
 use App\Http\Controllers\Api\CartApiController;
 use App\Http\Controllers\Api\ProductApiController;
 use App\Http\Controllers\Api\ProfileApiController;
-
+use App\Http\Controllers\Api\GeneralApiController; // <--- Import Controller Baru
 use App\Http\Controllers\Api\ShopApiController;
 use App\Http\Controllers\Api\TransactionApiController;
 use Illuminate\Http\Request;
@@ -23,6 +23,8 @@ use Illuminate\Support\Facades\Route;
 // Registrasi & Login (Controller yang sudah kita bersihkan tadi)
 Route::post('/register', [AuthApiController::class, 'register']);
 Route::post('/login', [AuthApiController::class, 'login']);
+Route::get('/admin-contact', [GeneralApiController::class, 'getAdminContact']);
+
 
 Route::prefix('products')->group(function () {
     
