@@ -12,10 +12,21 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\IsFreelance;
 use App\Http\Middleware\IsMitra;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 
 
+Route::get('/fix-autoload', function() {
+    // Membersihkan cache
+    Artisan::call('optimize:clear');
+    
+    // Mencoba dump-autoload (mungkin tidak jalan di beberapa shared hosting)
+    // Tapi kita coba trigger autoloader composer
+    exec('composer dump-autoload');
+    
+    return 'Autoload fixed & Cache cleared!';
+});
 
 
 
@@ -54,6 +65,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware(IsFreelance::class)->prefix('freelancer')->name('freelancer.')->group(function () {
         Route::resource('portfolios', PortfolioController::class);
     });
+
     Route::middleware(IsAdmin::class)->prefix('admin')->name('admin.')->group(function () {
         // 1. Tampilkan Daftar Request Pending (GET)
         Route::get('/promotions', [AdminPromotionController::class, 'index'])

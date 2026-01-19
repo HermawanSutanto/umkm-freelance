@@ -12,6 +12,24 @@
         <form action="{{ route('mitra.products.update', $product->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
             @method('PUT') 
+            <div class="space-y-1">
+                <label class="block text-sm font-semibold text-gray-700">Kategori</label>
+                <select name="category_id" class="w-full px-4 py-3 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-gold/50">
+                    <option value="">-- Pilih Kategori --</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}" {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('category_id') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+            </div>
+
+            {{-- Opsi Buat Kategori Baru (Opsional, sesuai controller Anda) --}}
+            <div class="space-y-1 mt-4">
+                <label class="block text-sm font-semibold text-gray-700">Atau Buat Kategori Baru</label>
+                <input type="text" name="new_category" value="{{ old('new_category') }}" placeholder="Isi jika kategori tidak ada di list" class="w-full px-4 py-3 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-gold/50">
+            </div>
             
             {{-- Nama Produk --}}
             <div class="space-y-1">
@@ -23,9 +41,15 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {{-- Harga --}}
                 <div class="space-y-1">
-                    <label class="block text-sm font-semibold text-gray-700">Harga (Rp)</label>
+                    <label class="block text-sm font-semibold text-gray-700">Harga Diskon (Rp)</label>
                     <input type="number" name="price" value="{{ old('price', $product->price) }}" class="w-full px-4 py-3 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-gold/50">
                     @error('price') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                </div>
+                {{-- Harga Diskon --}}
+                <div class="space-y-1">
+                    <label class="block text-sm font-semibold text-gray-700">Harga (Rp)</label>
+                    <input type="number" name="real_price" value="{{ old('real_price', $product->real_price) }}" class="w-full px-4 py-3 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-gold/50">
+                    @error('real_price') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 {{-- Stok --}}

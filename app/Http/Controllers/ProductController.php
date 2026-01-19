@@ -46,6 +46,7 @@ class ProductController extends Controller
             'new_category' => 'required_without:category_id|nullable|string|max:50',            
             'name'          => 'required|string|max:255',
             'price'         => 'required|numeric|min:0',
+            'real_price' => 'nullable|numeric|min:0',
             'stock'         => 'required|integer|min:0',
             'description'   => 'nullable|string',
             
@@ -87,6 +88,7 @@ class ProductController extends Controller
                 'name'        => $validated['name'],
                 'slug'        => Str::slug($validated['name']) . '-' . Str::random(5),
                 'price'       => $validated['price'],
+                'real_price' => $validated['real_price'],
                 'stock'       => $validated['stock'],
                 'description' => $validated['description'],
                 'cover_image' => $coverPath, // Simpan path cover di sini
@@ -206,82 +208,86 @@ class ProductController extends Controller
     /**
      * Update Data Produk
      */
-    public function update(Request $request, $id)
-    {
-        $product = Product::findOrFail($id);
+   public function update(Request $request, $id)
+{
+    $product = Product::findOrFail($id);
 
-        if ($product->user_id !== Auth::id()) {
-            abort(403);
-        }
-
-        // 1. Validasi
-        $validated = $request->validate([
-            'category_id'  => 'required_without:new_category|nullable|exists:categories,id',
-            'new_category' => 'required_without:category_id|nullable|string|max:50', // Validasi kategori baru            'name'          => 'required|string|max:255',
-            'price'         => 'required|numeric|min:0',
-            'stock'         => 'required|integer|min:0',
-            'description'   => 'nullable|string',
-            // Cover image jadi nullable saat edit (kalau tidak diganti, pakai yang lama)
-            'cover_image'   => 'nullable|image|mimes:jpeg,png,jpg|max:2048', 
-            'gallery_images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'is_active'     => 'boolean' // Untuk status aktif/nonaktif
-        ], [
-            'category_id.required_without' => 'Silakan pilih kategori atau buat baru.',
-            'new_category.required_without' => 'Silakan pilih kategori atau buat baru.',
-        ]);
-
-        DB::beginTransaction();
-
-        try {
-            // --- LOGIKA KATEGORI ---
-            $categoryId = $request->category_id;
-            if ($request->filled('new_category')) {
-                $category = Category::firstOrCreate(
-                    ['slug' => Str::slug($request->new_category)],
-                    ['name' => $request->new_category]
-                );
-                $categoryId = $category->id;
-            }
-            // 2. Handle Cover Image (Jika User Upload Baru)
-           if ($request->hasFile('cover_image')) {
-                if ($product->cover_image) Storage::disk('public')->delete($product->cover_image);
-                
-                // Gunakan Helper
-                $path = $this->uploadImage($request->file('cover_image'), 'products/covers');
-                $product->cover_image = $path;
-            }
-
-            // 3. Update Data Text
-            $product->update([
-                'category_id' => $categoryId, // Gunakan ID hasil logika di atas,
-                'name'        => $validated['name'],
-                // Slug opsional: mau diupdate saat nama berubah atau tetap? 
-                // Di sini saya buat update slug jika nama berubah
-                'slug'        => Str::slug($validated['name']) . '-' . Str::random(5),
-                'price'       => $validated['price'],
-                'stock'       => $validated['stock'],
-                'description' => $validated['description'],
-                // 'cover_image' sudah dihandle di atas
-                // 'is_active' bisa ditambahkan inputnya di view jika mau
-            ]);
-
-            // 4. Handle Gallery Images (APPEND / Menambah Baru)
-            if ($request->hasFile('gallery_images')) {
-                foreach ($request->file('gallery_images') as $image) {
-                    // Gunakan Helper
-                    $path = $this->uploadImage($image, 'products/gallery');
-                    $product->images()->create(['image_path' => $path]);
-                }
-            }
-
-            DB::commit();
-            return redirect()->route('mitra.products.index')->with('success', 'Produk berhasil diperbarui!');
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->withInput()->withErrors(['error' => 'Gagal update: ' . $e->getMessage()]);
-        }
+    if ($product->user_id !== Auth::id()) {
+        abort(403);
     }
+
+    // 1. Validasi (Tambahkan real_price)
+    $validated = $request->validate([
+        'category_id'    => 'required_without:new_category|nullable|exists:categories,id',
+        'new_category'   => 'required_without:category_id|nullable|string|max:50',
+        'name'           => 'required|string|max:255',
+        'price'          => 'required|numeric|min:0',
+        'real_price'     => 'nullable|numeric|min:0', // Validasi real_price
+        'stock'          => 'required|integer|min:0',
+        'description'    => 'nullable|string',
+        'cover_image'    => 'nullable|image|mimes:jpeg,png,jpg|max:2048', 
+        'gallery_images.*' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'is_active'      => 'boolean'
+    ]);
+
+    DB::beginTransaction();
+
+    try {
+        // --- LOGIKA KATEGORI ---
+        $categoryId = $request->category_id;
+        if ($request->filled('new_category')) {
+            $category = Category::firstOrCreate(
+                ['slug' => Str::slug($request->new_category)],
+                ['name' => $request->new_category]
+            );
+            $categoryId = $category->id;
+        }
+
+        // Siapkan data update
+        $dataToUpdate = [
+            'category_id' => $categoryId,
+            'name'        => $validated['name'],
+            'price'       => $validated['price'],
+            'real_price'  => $validated['real_price'] ?? null, // FIX: Masukkan real_price
+            'stock'       => $validated['stock'],
+            'description' => $validated['description'],
+        ];
+
+        // Update Slug HANYA jika nama berubah (Opsional, demi SEO)
+        if ($product->name !== $validated['name']) {
+            $dataToUpdate['slug'] = Str::slug($validated['name']) . '-' . Str::random(5);
+        }
+
+        // 2. Handle Cover Image
+        if ($request->hasFile('cover_image')) {
+            // Hapus lama
+            if ($product->cover_image) {
+                Storage::disk('public')->delete($product->cover_image);
+            }
+            // Upload baru & Masukkan ke array update
+            $path = $this->uploadImage($request->file('cover_image'), 'products/covers');
+            $dataToUpdate['cover_image'] = $path; 
+        }
+
+        // 3. Eksekusi Update Text & Cover
+        $product->update($dataToUpdate);
+
+        // 4. Handle Gallery Images (Append)
+        if ($request->hasFile('gallery_images')) {
+            foreach ($request->file('gallery_images') as $image) {
+                $path = $this->uploadImage($image, 'products/gallery');
+                $product->images()->create(['image_path' => $path]);
+            }
+        }
+
+        DB::commit();
+        return redirect()->route('mitra.products.index')->with('success', 'Produk berhasil diperbarui!');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->withInput()->withErrors(['error' => 'Gagal update: ' . $e->getMessage()]);
+    }
+}
 
     /**
      * Hapus Satu Gambar Galeri

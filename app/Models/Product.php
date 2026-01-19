@@ -14,7 +14,7 @@ class Product extends Model
     
 
     protected $fillable = [
-        'user_id','category_id', 'name', 'slug', 'description', 
+        'user_id','category_id', 'name', 'slug', 'description', 'real_price',
         'price', 'stock', 'cover_image', 'is_active','highlight_level','highlight_expires_at'
     ];
     protected $appends = ['cover_url', 'price_format'];
@@ -46,6 +46,10 @@ class Product extends Model
     public function getPriceFormatAttribute()
     {
         return 'Rp ' . number_format($this->price, 0, ',', '.');
+    }
+    public function getRealPriceFormatAttribute()
+    {
+        return 'Rp ' . number_format($this->real_price, 0, ',', '.');
     }
     public function promotions(){
         return $this->hasMany(ProductPromotion::class);

@@ -38,19 +38,20 @@ class ProductApiController extends Controller
         // Parameter: 'terbaru', 'terlama', 'harga_rendah', 'harga_tinggi'
         $sort = $request->get('sort', 'terbaru'); // Default 'terbaru'
         switch ($sort) {
-            case 'harga_rendah':
-                $query->orderBy('price', 'asc');
-                break;
-            case 'harga_tinggi':
-                $query->orderBy('price', 'desc');
-                break;
-            case 'terlama':
-                $query->orderBy('created_at', 'asc');
-                break;
-            case 'terbaru':
-            default:
-                $query->latest(); // created_at desc
-                break;
+        case 'harga_rendah':
+            // Urutkan berdasarkan PRICE (Harga Jual), bukan real_price
+            $query->orderBy('price', 'asc'); 
+            break;
+        case 'harga_tinggi':
+            $query->orderBy('price', 'desc');
+            break;
+        case 'terlama':
+            $query->orderBy('created_at', 'asc');
+            break;
+        case 'terbaru':
+        default:
+            $query->latest(); // created_at desc
+            break;
         }
 
         // 4. Urutkan dari yang terbaru
@@ -67,6 +68,7 @@ class ProductApiController extends Controller
                 'name'          => $product->name,
                 'slug'          => $product->slug,
                 'price'         => $product->price,
+                'real_price'    => $product->real_price_format,
                 'price_format'  => $product->price_format, // Dari Accessor Model
                 'stock'         => $product->stock,
                 'cover_url'     => $product->cover_url,    // Dari Accessor Model (URL Lengkap)
@@ -112,6 +114,7 @@ class ProductApiController extends Controller
             'slug'         => $product->slug,
             'description'  => $product->description,
             'price'        => $product->price,
+            'real_price'   => $product->real_price_format,
             'price_format' => $product->price_format,
             'stock'        => $product->stock,
             'cover_url'    => $product->cover_url,

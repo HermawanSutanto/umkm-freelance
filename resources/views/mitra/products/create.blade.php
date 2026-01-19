@@ -57,12 +57,17 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {{-- Harga --}}
+                {{-- Harga Diskon--}}
                 <div class="space-y-1">
-                    <label class="block text-sm font-semibold text-gray-700">Harga (Rp) <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-semibold text-gray-700">Harga Diskon (Rp) <span class="text-red-500">*</span></label>
                     <input type="number" name="price" value="{{ old('price') }}" class="w-full px-4 py-3 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-gold/50" placeholder="15000">
                     @error('price') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                </div>
+                </div>              
+                {{-- Harga  --}}
+                <div class="space-y-1">
+                    <label class="block text-sm font-semibold text-gray-700">Harga(Rp)</label>
+                    <input type="number" name="real_price" value="{{ old('real_price') }}" class="w-full px-4 py-3 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-brand-gold/50" placeholder="12000">
+                    @error('real_price') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
 
                 {{-- Stok --}}
                 <div class="space-y-1">

@@ -41,7 +41,6 @@ class UserSeeder extends Seeder
         ]);
 
         
-
         // 2. Buat Admin Profile yang terhubung
         MitraProfile::create([
             'user_id' => $admin2->id,

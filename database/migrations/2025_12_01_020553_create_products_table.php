@@ -17,7 +17,8 @@ return new class extends Migration
             $table->string('slug')->unique(); // Untuk URL SEO friendly (contoh: /produk/keripik-pisang-coklat)
             $table->text('description')->nullable();
             // Data Penjualan
-            $table->integer('price'); // Gunakan integer untuk Rupiah (hindari desimal/float)
+            $table->integer(column: 'price'); // Gunakan integer untuk Rupiah (hindari desimal/float)
+            $table->integer(column: 'real_price'); // Gunakan integer untuk Rupiah (hindari desimal/float)
             $table->integer('stock')->default(0);
             // Media
             $table->string('cover_image')->nullable();
@@ -25,7 +26,6 @@ return new class extends Migration
             $table->timestamp('highlight_expires_at')->nullable();            
             // Status
             $table->boolean('is_active')->default(true); // Agar mitra bisa menyembunyikan produk tanpa menghapus
-
             $table->timestamps();
         });
     }
