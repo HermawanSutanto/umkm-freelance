@@ -5,12 +5,14 @@ Platform digital untuk menghubungkan UMKM (Usaha Mikro, Kecil, dan Menengah) den
 ## Fitur Utama
 
 ### 👥 Multi-Role User System
+
 - **Admin**: Mengelola platform, promosi, dan konten
 - **Mitra (Seller)**: Menjual produk dan layanan, mengelola katalog
 - **Freelancer**: Menawarkan jasa dan portfolio kerja
 - **Customer**: Membeli produk dan menggunakan layanan
 
 ### 🛍️ E-Commerce Features
+
 - **Product Catalog**: Sistem kategori produk yang terstruktur
 - **Shopping Cart**: Keranjang belanja yang fully functional
 - **Checkout System**: Proses pembelian yang mudah dan aman
@@ -18,16 +20,19 @@ Platform digital untuk menghubungkan UMKM (Usaha Mikro, Kecil, dan Menengah) den
 - **Payment Methods**: Dukungan berbagai metode pembayaran
 
 ### 🎨 Portfolio & Services
+
 - **Portfolio Management**: Freelancer dapat menampilkan portofolio kerja
 - **Service Listings**: Penawaran layanan dengan detail lengkap
 - **Transaction Tracking**: History transaksi dan status pembayaran
 
 ### 🎯 Promotion System
+
 - **Product Highlights**: Promosi produk dengan level highlight
 - **Admin Promotions**: Manajemen promosi dari sisi admin
 - **Expiry Management**: Sistem expiry untuk promosi
 
 ### 📱 Modern Architecture
+
 - **API-First Design**: REST API menggunakan Laravel Sanctum
 - **Single Page Application**: Frontend dengan Vite + Tailwind CSS
 - **Responsive Design**: Mobile-friendly interface
@@ -36,6 +41,7 @@ Platform digital untuk menghubungkan UMKM (Usaha Mikro, Kecil, dan Menengah) den
 ## Tech Stack
 
 ### Backend
+
 - **Framework**: Laravel 12.x
 - **Database**: MySQL/MariaDB
 - **Authentication**: Laravel Sanctum (Token-based)
@@ -43,12 +49,14 @@ Platform digital untuk menghubungkan UMKM (Usaha Mikro, Kecil, dan Menengah) den
 - **Testing**: PHPUnit 11.5
 
 ### Frontend
+
 - **Build Tool**: Vite 5.0
 - **Styling**: Tailwind CSS 4.1
 - **HTTP Client**: Axios 1.11
 - **Runtime**: Node.js (ES Modules)
 
 ### Development Tools
+
 - **Package Manager**: Composer & npm
 - **Linting**: Laravel Pint
 - **Process Management**: Concurrently
@@ -65,17 +73,20 @@ Platform digital untuk menghubungkan UMKM (Usaha Mikro, Kecil, dan Menengah) den
 ## Installation
 
 ### 1. Clone Repository
+
 ```bash
 git clone <repository-url>
 cd umkm-freelance
 ```
 
 ### 2. Setup Otomatis
+
 ```bash
 composer run-script setup
 ```
 
 Script ini akan:
+
 - Install dependency PHP
 - Generate `.env` file
 - Generate application key
@@ -86,24 +97,28 @@ Script ini akan:
 ### 3. Manual Setup (Jika diperlukan)
 
 #### Install Dependencies
+
 ```bash
 composer install
 npm install
 ```
 
 #### Konfigurasi Environment
+
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
 #### Database Setup
+
 ```bash
 php artisan migrate
 php artisan db:seed  # Optional
 ```
 
 #### Build Assets
+
 ```bash
 npm run build   # Production
 npm run dev     # Development
@@ -114,11 +129,13 @@ npm run dev     # Development
 ### Menjalankan Development Server
 
 Untuk menjalankan semua service sekaligus (server, queue, logs, vite):
+
 ```bash
 composer run-script dev
 ```
 
 Atau jalankan secara terpisah:
+
 ```bash
 # Terminal 1: Laravel Development Server
 php artisan serve
@@ -134,6 +151,7 @@ npm run dev
 ```
 
 ### Running Tests
+
 ```bash
 composer run-script test
 ```
@@ -141,6 +159,7 @@ composer run-script test
 ## Project Structure
 
 ### Backend (`app/`)
+
 ```
 app/
 ├── Http/
@@ -161,6 +180,7 @@ app/
 ```
 
 ### Database (`database/`)
+
 ```
 database/
 ├── migrations/               # Database Schema
@@ -169,11 +189,13 @@ database/
 ```
 
 ### Routes
+
 - `routes/api.php` - API endpoints (JSON responses)
 - `routes/web.php` - Web routes (HTML responses)
 - `routes/console.php` - Console/CLI commands
 
 ### Frontend (`resources/`)
+
 ```
 resources/
 ├── js/                       # JavaScript/Vue Components
@@ -186,19 +208,22 @@ resources/
 ### Public Endpoints (No Authentication Required)
 
 #### Authentication
+
 - `POST /api/register` - Register new user
 - `POST /api/login` - Login user
 - `GET /api/admin-contact` - Get admin contact info
 
 #### Products
+
 - `GET /api/products` - List products (paginated, searchable)
-  - Query params: `?page=1&search=keyword&category=id`
+    - Query params: `?page=1&search=keyword&category=id`
 - `GET /api/products/categories` - List all categories
 - `GET /api/products/{slug}` - Get product detail
 
 ### Protected Endpoints (Requires Authentication)
 
 #### Cart Management
+
 - `GET /api/cart` - Get user's cart
 - `POST /api/cart/add` - Add item to cart
 - `PUT /api/cart/update/{cartItemId}` - Update quantity
@@ -207,6 +232,7 @@ resources/
 - `POST /api/checkout` - Create order from cart
 
 #### Transactions
+
 - `GET /api/transactions` - List user transactions
 - `GET /api/transactions/{code}` - Get transaction detail
 - `POST /api/transactions/{code}/upload-proof` - Upload payment proof
@@ -214,6 +240,7 @@ resources/
 ## Database Schema
 
 ### Key Tables
+
 - `users` - User accounts dengan role-based access
 - `products` - Product catalog
 - `product_images` - Product image gallery
@@ -231,14 +258,15 @@ resources/
 
 ### User Roles & Permissions
 
-| Role | Capabilities |
-|------|---|
-| Customer | Browse products, add to cart, checkout, view order history |
+| Role           | Capabilities                                                  |
+| -------------- | ------------------------------------------------------------- |
+| Customer       | Browse products, add to cart, checkout, view order history    |
 | Mitra (Seller) | Create products, manage inventory, view sales, receive orders |
-| Freelancer | Create portfolio, offer services, manage projects |
-| Admin | Manage users, manage promotions, system configuration |
+| Freelancer     | Create portfolio, offer services, manage projects             |
+| Admin          | Manage users, manage promotions, system configuration         |
 
 ### Product Management
+
 - Upload product dengan multiple images
 - Kategori dan sub-kategori
 - Pricing dengan real price dan selling price
@@ -247,6 +275,7 @@ resources/
 - SEO-friendly slugs
 
 ### Order & Payment
+
 - Cart-based shopping
 - Multi-step checkout
 - Payment verification
@@ -254,6 +283,7 @@ resources/
 - Transaction history
 
 ### Promotion System
+
 - Admin product highlights
 - Highlight levels dan expiry dates
 - Featured products display
@@ -261,6 +291,7 @@ resources/
 ## Environment Variables
 
 Key environment variables di `.env`:
+
 ```
 APP_NAME=UMKM-Freelance
 APP_ENV=local
@@ -282,6 +313,7 @@ MAIL_HOST=smtp.mailtrap.io
 ## Deployment
 
 ### Production Build
+
 ```bash
 # Build frontend assets
 npm run build
@@ -301,6 +333,7 @@ php artisan view:cache
 ```
 
 ### Using Laravel Sail
+
 ```bash
 # Start containers
 ./vendor/bin/sail up -d
@@ -315,17 +348,20 @@ php artisan view:cache
 ## Troubleshooting
 
 ### Storage Link Issue
+
 ```bash
 php artisan storage:link
 ```
 
 ### Permission Issues
+
 ```bash
 chmod -R 775 storage/
 chmod -R 775 bootstrap/cache/
 ```
 
 ### Clear All Caches
+
 ```bash
 php artisan config:clear
 php artisan cache:clear
